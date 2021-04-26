@@ -83,6 +83,8 @@ class FormController extends AbstractController
 
 #### Поиск по формам
 
+Именование полей - как и при сохранении результата.
+
 ```php
 use Prokl\BitrixWebformBundle\Services\FormSearcher;
 use Symfony\Component\HttpFoundation\Request;
@@ -101,7 +103,7 @@ class FormController extends AbstractController
       $params = $request->request->all();
        
       $result = $searcher->addFilter($params)
-                          ->setIdForm(8)
+                          ->setIdForm(8) // Допустимо использовать setFormCode('Символьный код формы')
                           ->exist();
         
       return new Response(['already_exists' => $result]);  
@@ -109,4 +111,34 @@ class FormController extends AbstractController
   }
 }
 
+```
+
+#### Хэлперы работы с формами
+
+Класс `FormManager`:
+
+- ```getFormIdBySID(string $sid)``` - ID формы по символьному коду;
+- ```getFormAnswers(string $sid)``` - Ответы формы (не учитывает множественные вопросы!);
+- ```getAllAnswersByIdQuestion(string $formCode, string $codeQuestion)``` - Все ответы по коду вопроса;
+- ```getAnswersForm($questionID)``` - Ответ по ID вопроса;
+
+Класс `FormResult`:
+
+- ```add(int $idWebform, array $arValuesForm = [])``` - Добавить в модуль веб-формы в форму данные. Входные
+параметры - в битриксовом формате. Что-то типа:
+
+```html
+<pre>array (
+     *   [WEB_FORM_ID] => 3
+     *   [web_form_submit] => Отправить
+     *
+     *   [form_text_18] => aafafsfasdf
+     *   [form_text_19] => q1241431342
+     *   [form_text_21] => afsafasdfdsaf
+     *   [form_textarea_20] =>
+     *   [form_text_22] => fasfdfasdf
+     *   [form_text_23] => 31243123412
+     *
+     *   18, 19, 21 - ID ответов у вопросов
+     *   )</pre>
 ```
