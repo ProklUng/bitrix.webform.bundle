@@ -16,7 +16,7 @@
 ## Валидаторы
 
 1) **Email** - при помощи [https://github.com/egulias/EmailValidator]()
-2) **Laravel Validator** - при помощи [https://github.com/illuminate/validation](Illuminate Validation)
+2) **Laravel Validator** - при помощи [https://github.com/illuminate/validation]()
 3) **Валидатор на число**
 4) **Валидатор телефонного номера** - при помощи [https://github.com/giggsey/libphonenumber-for-php]()
 5) **Валидатор на длину текста** (минимальная, максимальная)
