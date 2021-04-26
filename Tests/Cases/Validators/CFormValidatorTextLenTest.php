@@ -3,6 +3,7 @@
 namespace Cases\Validators;
 
 use Prokl\BitrixTestingTools\Base\BitrixableTestCase;
+use Prokl\BitrixTestingTools\Traits\BitrixExceptionAssertTrait;
 use Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorTextLen;
 use Prokl\TestingTools\Traits\DataProvidersTrait;
 
@@ -13,6 +14,7 @@ use Prokl\TestingTools\Traits\DataProvidersTrait;
 class CFormValidatorTextLenTest extends BitrixableTestCase
 {
     use DataProvidersTrait;
+    use BitrixExceptionAssertTrait;
 
     /**
      * @var CFormValidatorTextLen $obTestObject
@@ -60,13 +62,7 @@ class CFormValidatorTextLenTest extends BitrixableTestCase
 
         $this->assertFalse($result);
 
-        global $APPLICATION;
-        $exceptionText = $APPLICATION->GetException();
-
-        $this->assertSame(
-            'Ошибка по максимальной длине.',
-            $exceptionText->GetString()
-        );
+        $this->willExpectBitrixExceptionMessage('Ошибка по максимальной длине.');
     }
 
     /**
@@ -87,12 +83,6 @@ class CFormValidatorTextLenTest extends BitrixableTestCase
 
         $this->assertFalse($result);
 
-        global $APPLICATION;
-        $exceptionText = $APPLICATION->GetException();
-
-        $this->assertSame(
-            'Ошибка по минимальной длине.',
-            $exceptionText->GetString()
-        );
+        $this->willExpectBitrixExceptionMessage('Ошибка по минимальной длине.');
     }
 }

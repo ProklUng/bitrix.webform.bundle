@@ -3,6 +3,7 @@
 namespace Cases\Validators;
 
 use Prokl\BitrixTestingTools\Base\BitrixableTestCase;
+use Prokl\BitrixTestingTools\Traits\BitrixExceptionAssertTrait;
 use Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorNumber;
 use Prokl\BitrixWebformBundle\Tests\Tools\InvalidIntegerForTestNumbers;
 use Prokl\TestingTools\Traits\DataProvidersTrait;
@@ -14,6 +15,7 @@ use Prokl\TestingTools\Traits\DataProvidersTrait;
 class CFormValidatorNumberTest extends BitrixableTestCase
 {
     use DataProvidersTrait;
+    use BitrixExceptionAssertTrait;
 
     /**
      * @var CFormValidatorNumber $obTestObject
@@ -65,13 +67,7 @@ class CFormValidatorNumberTest extends BitrixableTestCase
 
         $this->assertFalse($result);
 
-        global $APPLICATION;
-        $exceptionText = $APPLICATION->GetException();
-
-        $this->assertSame(
-            '#FIELD_NAME#: допустимы только числовые значения',
-            $exceptionText->GetString()
-        );
+        $this->willExpectBitrixExceptionMessage('#FIELD_NAME#: допустимы только числовые значения');
     }
 
     /**

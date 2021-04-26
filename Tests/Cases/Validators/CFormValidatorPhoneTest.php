@@ -3,6 +3,7 @@
 namespace Cases\Validators;
 
 use Prokl\BitrixTestingTools\Base\BitrixableTestCase;
+use Prokl\BitrixTestingTools\Traits\BitrixExceptionAssertTrait;
 use Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorPhone;
 
 /**
@@ -11,6 +12,8 @@ use Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorPhone;
  */
 class CFormValidatorPhoneTest extends BitrixableTestCase
 {
+    use BitrixExceptionAssertTrait;
+
     /**
      * @var CFormValidatorPhone $obTestObject
      */
@@ -61,13 +64,7 @@ class CFormValidatorPhoneTest extends BitrixableTestCase
 
         $this->assertFalse($result);
 
-        global $APPLICATION;
-        $exceptionText = $APPLICATION->GetException();
-
-        $this->assertSame(
-            '#FIELD_NAME#: невалидный телефон',
-            $exceptionText->GetString()
-        );
+        $this->willExpectBitrixExceptionMessage('#FIELD_NAME#: невалидный телефон');
     }
 
     /**

@@ -2,42 +2,34 @@
 
 namespace Cases\Validators;
 
-use Egulias\EmailValidator\EmailValidator;
 use Mockery;
 use Prokl\BitrixTestingTools\Base\BitrixableTestCase;
 use Prokl\BitrixTestingTools\Traits\BitrixExceptionAssertTrait;
-use Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorEmail;
+use Prokl\BitrixWebformBundle\Services\FormSearcher;
+use Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorUnique;
 
 /**
- * Class CFormValidatorEmailTest
+ * Class CFormValidatorUniqueTest
  * @package Cases\Validators
  */
-class CFormValidatorEmailTest extends BitrixableTestCase
+class CFormValidatorUniqueTest extends BitrixableTestCase
 {
     use BitrixExceptionAssertTrait;
 
     /**
-     * @var CFormValidatorEmail $obTestObject
+     * @var CFormValidatorUnique $obTestObject
      */
     protected $obTestObject;
 
     /**
-     * @inheritDoc
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    /**
-     * Если все OK.
+     * Если все OK - такой записи нет.
      *
      * @return void
      */
-    public function testOkEmail() : void
+    public function testNonUnique() : void
     {
-        $this->obTestObject = new CFormValidatorEmail(
-            $this->getMockEmailValidator(true)
+        $this->obTestObject = new CFormValidatorUnique(
+            $this->getMockFormSearch(false)
         );
 
         $result = $this->obTestObject->DoValidate(
@@ -51,14 +43,14 @@ class CFormValidatorEmailTest extends BitrixableTestCase
     }
 
     /**
-     * Если email не прошел валидацию.
+     * Такая запись есть.
      *
      * @return void
      */
-    public function testErrorEmail() : void
+    public function testUnique() : void
     {
-        $this->obTestObject = new CFormValidatorEmail(
-            $this->getMockEmailValidator(false)
+        $this->obTestObject = new CFormValidatorUnique(
+            $this->getMockFormSearch(true)
         );
 
         $result = $this->obTestObject->DoValidate(
@@ -70,22 +62,25 @@ class CFormValidatorEmailTest extends BitrixableTestCase
 
         $this->assertFalse($result);
 
-        $this->willExpectBitrixExceptionMessage("#FIELD_NAME#: невалидный адрес электронной почты");
+        $this->willExpectBitrixExceptionMessage("#FIELD_NAME#: такое значение уже существует в базе.");
     }
 
     /**
-     * Мок EmailValidator.
+     * Мок FormSearcher.
      *
      * @param boolean $answer Ответ валидатора. true -> OK, false -> валидация не прошла.
      *
      * @return mixed
      */
-    private function getMockEmailValidator(bool $answer = true) {
-        $mock = Mockery::mock(EmailValidator::class)
-                ->shouldReceive('isValid')
+    private function getMockFormSearch(bool $answer = true) {
+        $mock = Mockery::mock(FormSearcher::class);
+
+        $mock->shouldReceive('exist')
                 ->once()
-                ->andReturn($answer)
-        ;
+                ->andReturn($answer);
+
+        $mock = $mock->shouldReceive('addFilter');
+        $mock = $mock->shouldReceive('setIdForm');
 
         return $mock->getMock();
     }
