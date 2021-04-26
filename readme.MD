@@ -28,7 +28,31 @@
 
 Вспомогательный сервис `CreateWebForm`, предназначенный для _более-менее_ комфортного создания форм (например, в миграциях).
 
+```php
+use Prokl\BitrixWebformBundle\Services\Migrations\CreateWebForm;
 
+/**
+ * @var CreateWebForm $creator
+ */
+$creator = container()->get('bitrix_form_bundle.create_form');
+
+$creator->deleteFormByCode('TESTING_FORM');
+$creator->setNameForm('Тестировочная форма')
+        ->setMenuItem(['ru' => 'Тестировочная форма', 'en' => 'Testing'])
+        ->setSort(1000)
+        ->setSidForm('TESTING_FORM')
+        ->createForm()
+        ->addTextField('EMAIL', 'Электронный адрес')
+        ->addRadioButtonYesNow('RIGHTS', 'Вы гуманоид?')
+        ->addTextField('NAME', 'Ваше имя')
+        ->addTextareaField('COMMENTS', 'Комментарии')
+        ->addDropdown('DROPS', 'Список', [
+            'LIST1', 'LIST2'
+        ])
+        ->addQuestions()
+        ->createEmailTemplate()
+        ->createStatus();
+```
 
 ## Примеры
 
@@ -57,7 +81,32 @@ class FormController extends AbstractController
 }
 ```
 
+#### Поиск по формам
 
 ```php
+use Prokl\BitrixWebformBundle\Services\FormSearcher;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class FormController extends AbstractController
+{
+  public function action(Request $request, FormSearcher $searcher) : Response 
+  {
+        /**
+        $params = [
+            'NAME' => '1111',
+            'EMAIL' => 'email@email.ru',
+        ];
+       */
+      $params = $request->request->all();
+       
+      $result = $searcher->addFilter($params)
+                          ->setIdForm(8)
+                          ->exist();
+        
+      return new Response(['already_exists' => $result]);  
+  
+  }
+}
 
 ```
