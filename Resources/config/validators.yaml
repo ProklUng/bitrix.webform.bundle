@@ -1,0 +1,59 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  # Валидатор - минимальная-максимальная длина строки.
+  Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorTextLen:
+    class: Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorTextLen
+    tags:
+      - { name: bitrix.events.init, module: form, event: onFormValidatorBuildList, method: GetDescription, sort: 1 }
+
+  # Валидатор на целое число.
+  Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorNumber:
+    class: Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorNumber
+    tags:
+      - { name: bitrix.events.init, module: form, event: onFormValidatorBuildList, method: GetDescription, sort: 1 }
+
+  bitrix_form_bundle.email_validator:
+    public: false
+    class: Egulias\EmailValidator\EmailValidator
+
+  # Валидатор email.
+  Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorEmail:
+    arguments: ['@bitrix_form_bundle.email_validator']
+    class: Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorEmail
+    tags:
+      - { name: bitrix.events.init, module: form, event: onFormValidatorBuildList, method: GetDescription, sort: 1 }
+
+  # Валидатор телефонного номера.
+  Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorPhone:
+    class: Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorPhone
+    tags:
+      - { name: bitrix.events.init, module: form, event: onFormValidatorBuildList, method: GetDescription, sort: 1 }
+
+  # Валидатор уникального значения поля.
+  Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorUnique:
+    arguments: ['@bitrix_form_bundle.form_searcher']
+    class: Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorUnique
+    tags:
+      - { name: bitrix.events.init, module: form, event: onFormValidatorBuildList, method: GetDescription, sort: 1 }
+
+  Prokl\BitrixWebformBundle\Services\Validators\CFormValidHttp:
+    arguments: ['@bitrix_form_bundle.form_searcher']
+    class: Prokl\BitrixWebformBundle\Services\Validators\CFormValidHttp
+    tags:
+      - { name: bitrix.events.init, module: form, event: onFormValidatorBuildList, method: GetDescription, sort: 1 }
+
+  # Пример конфигурирования валидатора Laravel.
+  Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorLaravel:
+    arguments:
+      - 'laravel-numeric'
+      - 'Пример применения валидатора Laravel'
+      - 'numeric|min:10'
+      - '#FIELD_NAME# должно быть числом больше 10'
+      - ['text', 'textarea']
+    class: Prokl\BitrixWebformBundle\Services\Validators\CFormValidatorLaravel
+    tags:
+      - { name: bitrix.events.init, module: form, event: onFormValidatorBuildList, method: GetDescription, sort: 1 }

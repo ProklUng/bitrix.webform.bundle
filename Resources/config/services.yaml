@@ -1,0 +1,81 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  ######################################
+  # Битриксовые классы работы с формами
+  ######################################
+
+  bitrix_form_bundle.cform_crm:
+    public: false
+    class: CFormCrm
+
+  bitrix_form_bundle.cform:
+    public: false
+    class: CForm
+
+  bitrix_form_bundle.cform_result:
+    public: false
+    class: CFormResult
+
+  bitrix_form_bundle.cform_status:
+    public: false
+    class: CFormStatus
+
+  bitrix_form_bundle.cform_answer:
+    public: false
+    class: CFormAnswer
+
+  bitrix_form_bundle.cform_field:
+    public: false
+    class: CFormField
+
+  # Занесение результатов в базу.
+  bitrix_form_bundle.form_result:
+    class: Prokl\BitrixWebformBundle\Services\FormResult
+    arguments: ['@bitrix_form_bundle.cform', '@bitrix_form_bundle.cform_result', '@bitrix_form_bundle.cform_crm']
+
+  Prokl\BitrixWebformBundle\Services\FormResult: '@bitrix_form_bundle.form_result'
+
+  # Утилиты для работы с формами.
+  bitrix_form_bundle.form_manager:
+    class: Prokl\BitrixWebformBundle\Services\FormManager
+    arguments:
+      - '@bitrix_form_bundle.cform'
+      - '@bitrix_form_bundle.cform_field'
+      - '@bitrix_form_bundle.cform_answer'
+
+  Prokl\BitrixWebformBundle\Services\FormManager: '@bitrix_form_bundle.form_manager'
+
+  # Конвертор параметров формы.
+  bitrix_form_bundle.form_param_convertor:
+    class: Prokl\BitrixWebformBundle\Services\FormParamsProcessor
+    arguments: ['@bitrix_form_bundle.cform', '@bitrix_form_bundle.form_manager']
+
+  Prokl\BitrixWebformBundle\Services\FormParamsProcessor: '@bitrix_form_bundle.form_param_convertor'
+
+  # Обработка формы.
+  bitrix_form_bundle.form_processor:
+    class: Prokl\BitrixWebformBundle\Services\FormProcessor
+    arguments:
+      - '@bitrix_form_bundle.form_param_convertor'
+      - '@bitrix_form_bundle.form_result'
+      - '@bitrix_form_bundle.form_searcher'
+      - '@bitrix_form_bundle.cform'
+
+  Prokl\BitrixWebformBundle\Services\FormProcessor: '@bitrix_form_bundle.form_processor'
+
+  # Поиск в формах.
+  bitrix_form_bundle.form_searcher:
+    class: Prokl\BitrixWebformBundle\Services\FormSearcher
+    arguments: ['@bitrix_form_bundle.cform_result', '@bitrix_form_bundle.cform']
+
+  Prokl\BitrixWebformBundle\Services\FormSearcher: '@bitrix_form_bundle.form_searcher'
+
+  # Для миграций - создание форм.
+  bitrix_form_bundle.create_form:
+    class: Prokl\BitrixWebformBundle\Services\Migrations\CreateWebForm
+    arguments: ['@bitrix_form_bundle.cform', '@bitrix_form_bundle.cform_status', '@bitrix_form_bundle.cform_field']
+
