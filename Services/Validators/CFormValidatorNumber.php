@@ -38,8 +38,7 @@ class CFormValidatorNumber extends AbstractCustomBitrixWebformValidator
         foreach ($arValues as $value)
         {
             // empty string is not a number but we won't return error - crossing with "required" mark
-            if ($value !== "" && (($value !==0  && (int)$value == 0) || strval((int)$value) !== strval($value)))
-            {
+            if (is_bool($value) || ($value !== "" && (($value !==0  && (int)$value === 0) || (string)(int)$value !== (string)$value))) {
                 $APPLICATION->ThrowException($this->errorMessage);
                 return false;
             }
@@ -47,5 +46,4 @@ class CFormValidatorNumber extends AbstractCustomBitrixWebformValidator
 
         return true;
     }
-
 }
