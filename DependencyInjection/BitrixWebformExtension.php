@@ -36,6 +36,6 @@ class BitrixWebformExtension extends Extension
      */
     public function getAlias()
     {
-        return 'bitrixwebform';
+        return 'bitrix-web-form';
     }
 }
